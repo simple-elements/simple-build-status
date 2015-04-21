@@ -1,0 +1,13 @@
+{
+  "name": "simple-build-status",
+  "version": "0.8.0",
+  "authors": [
+    "Chris Joel <cdata@google.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "dependencies": {
+    "polymer": "polymer/polymer#v0.8.0-rc.6",
+    "iron-ajax": "polymerelements/iron-ajax#^0.8.0"
+  }
+}
