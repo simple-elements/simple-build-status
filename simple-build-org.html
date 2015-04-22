@@ -1,0 +1,48 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
+<link rel="import" href="simple-build-repo.html">
+<dom-module id="simple-build-org">
+  <template>
+    <iron-ajax
+      url="[[computeReposApiUrl(name)]]"
+      params="[[computeReposApiParams(githubAccessToken)]]"
+      last-response="{{repos}}"
+      auto="[[computeReposApiEnabled(githubAccessToken)]]"></iron-ajax>
+
+    <template is="x-repeat" items="{{repos}}">
+      <simple-build-repo github-access-token="[[parent.githubAccessToken]]" repo="[[item]]"></simple-build-repo>
+    </template>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'simple-build-org',
+
+    properties: {
+      name: {
+        type: String,
+        value: 'polymerelements'
+      },
+
+      githubAccessToken: {
+        type: String
+      }
+    },
+
+    computeReposApiEnabled: function(githubAccessToken) {
+      return !!githubAccessToken;
+    },
+
+    computeReposApiUrl: function(name) {
+      return 'https://api.github.com/orgs/' + name + '/repos';
+    },
+
+    computeReposApiParams: function(githubAccessToken) {
+      return {
+        access_token: githubAccessToken
+      };
+    }
+  });
+</script>

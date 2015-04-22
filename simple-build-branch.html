@@ -1,0 +1,87 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+<dom-module id="simple-build-branch">
+  <style>
+    h2 {
+      mixin(--paper-font-title);
+      padding: 16px 0 0;
+      margin: 0;
+    }
+
+    span {
+      display: block;
+      mixin(--paper-font-subhead);
+      padding: 0 0 16px;
+      margin: 0;
+
+      font-style: italic;
+      color: #444;
+    }
+
+    :host {
+      display: block;
+      position: relative;
+      margin: 0 16px;
+    }
+
+    :host(:first-of-type) h2 {
+      font-size: 2em;
+    }
+
+    :host(:not(:last-of-type)) {
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+  <template>
+    <iron-ajax
+      id="ajax"
+      url="[[computeBranchApiUrl(repo, name)]]"
+      params="[[computeBranchApiParams(githubAccessToken)]]"
+      last-response="{{branch}}"
+      auto="[[computeBranchApiEnabled(githubAccessToken)]]"></iron-ajax>
+
+    <h2>[[branch.name]]</h2>
+    <span>[[repo.owner.login]]</span>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'simple-build-branch',
+
+    enableCustomStyleProperties: true,
+
+    properties: {
+      repo: {
+        type: Object
+      },
+
+      name: {
+        type: String
+      },
+
+      githubAccessToken: {
+        type: String
+      }
+    },
+
+    computeBranchApiEnabled: function(githubAccessToken) {
+      return !!githubAccessToken;
+    },
+
+    computeBranchApiUrl: function(repo, name) {
+      return 'https://api.github.com/repos/' +
+        repo.owner.login + '/' +
+        repo.name + '/branches/' +
+        name;
+    },
+
+    computeBranchApiParams: function(githubAccessToken) {
+      return {
+        access_token: githubAccessToken
+      };
+    }
+  });
+</script>
+

@@ -1,0 +1,83 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="simple-build-branch.html">
+<dom-module id="simple-build-repo">
+  <style>
+    :host {
+      display: block;
+      position: relative;
+      margin: 16px;
+    }
+
+    paper-card {
+      padding: 1em;
+    }
+
+    h1 {
+      mixin(--paper-font-title);
+      margin: 0;
+      padding: 16px;
+    }
+  </style>
+  <template>
+
+    <iron-ajax
+      url="[[computePullRequestsApiUrl(repo)]]"
+      params="[[computePullRequestsApiParams(githubAccessToken)]]"
+      last-response="{{pullRequests}}"
+      auto="[[computePullRequestsApiEnabled(githubAccessToken)]]"></iron-ajax>
+
+    <paper-card>
+      <h1>{{repo.name}}</h1>
+      <simple-build-branch repo="[[repo]]" name="master" github-access-token="[[githubAccessToken]]"></simple-build-branch>
+
+      <template is="x-repeat" items="[[computeRecentPullRequests(pullRequests)]]">
+        <simple-build-branch repo="[[item.head.repo]]" name="[[item.head.ref]]" github-access-token="[[parent.githubAccessToken]]"></simple-build-branch>
+      </template>
+    </paper-card>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'simple-build-repo',
+
+    enableCustomStyleProperties: true,
+
+    properties: {
+      pullRequests: {
+        type: Array
+      },
+
+      repo: {
+        type: Object
+      },
+
+      githubAccessToken: {
+        type: String
+      }
+    },
+
+    computeRecentPullRequests: function(pullRequests) {
+      return pullRequests.slice(0, 2);
+    },
+
+    computePullRequestsApiEnabled: function(githubAccessToken) {
+      return !!githubAccessToken;
+    },
+
+    computePullRequestsApiUrl: function(repo) {
+      return 'https://api.github.com/repos/' +
+        repo.owner.login + '/' +
+        repo.name + '/pulls';
+    },
+
+    computePullRequestsApiParams: function(githubAccessToken) {
+      return {
+        access_token: githubAccessToken,
+        sort: 'updated'
+      };
+    }
+  });
+</script>

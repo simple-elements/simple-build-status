@@ -8,6 +8,10 @@
   "license": "MIT",
   "dependencies": {
     "polymer": "polymer/polymer#v0.8.0-rc.6",
-    "iron-ajax": "polymerelements/iron-ajax#^0.8.0"
+    "iron-ajax": "polymerelements/iron-ajax#^0.8.0",
+    "firebase-element": "polymerelements/firebase-element#^0.8.0",
+    "iron-meta": "polymerelements/iron-meta#^0.8.0",
+    "paper-card": "polymerelements/paper-card#^0.8.0",
+    "paper-styles": "polymerelements/paper-styles#^0.8.0"
   }
 }

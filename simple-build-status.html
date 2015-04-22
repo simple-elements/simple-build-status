@@ -1,12 +1,30 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
+<link rel="import" href="../firebase-element/firebase-login.html">
+<link rel="import" href="simple-build-org.html">
 <dom-module id="simple-build-status">
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
   <template>
-    <iron-ajax url="[[computeReposApiUrl(org)]]" last-response="{{repos}}" auto></iron-ajax>
 
-    <template is="x-repeat" items="{{repos}}">
-      <simple-build-card repo="[[item]]"></simple-build-card>
-    </template>
+    <firebase-login
+      id="firebaseAuth"
+      user="{{user}}"
+      location="{{computeFirebaseUrl(firebaseAppName)}}"
+      provider="github"></firebase-login>
+
+    <iron-meta key="user" value="[[user]]"></iron-meta>
+
+    <section id="login" class$="{{computeLoginClassname(user)}}">
+      <button on-click="onLoginClicked">Login</button>
+    </section>
+
+    <section id="orgs" class$="{{computeOrgsClassname(user)}}">
+      <simple-build-org github-access-token="[[user.github.accessToken]]" name="[[orgName]]"></simple-build-org>
+    </section>
 
   </template>
 </dom-module>
@@ -15,14 +33,36 @@
     is: 'simple-build-status',
 
     properties: {
-      org: {
+      orgName: {
         type: String,
         value: 'polymerelements'
+      },
+
+      firebaseAppName: {
+        type: String,
+        value: 'simple-build-status'
+      },
+
+      user: {
+        type: String,
+        value: null
       }
     },
 
-    computeReposApiUrl: function(org) {
-      return 'http://api.github.com/orgs/' + org + '/repos';
+    computeFirebaseUrl: function(firebaseAppName) {
+      return 'https://' + firebaseAppName + '.firebaseio.com';
+    },
+
+    onLoginClicked: function() {
+      this.$.firebaseAuth.login();
+    },
+
+    computeLoginClassname: function(user) {
+      return user ? 'hidden' : '';
+    },
+
+    computeOrgsClassname: function(user) {
+      return user ? '' : 'hidden';
     }
   });
 </script>
